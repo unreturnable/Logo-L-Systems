@@ -1,0 +1,160 @@
+HIDETURTLE
+
+MAKE "treeSize 22000
+
+MAKE "tree ARRAY treeSize
+MAKE "prevPos ARRAY 60
+MAKE "level 0
+MAKE "maxSize COUNT treeSize
+MAKE "currentChar "X
+
+MAKE "ruleExp 5
+
+MAKE "tempTree ARRAY treeSize
+MAKE "tempCount 1
+
+TO makeTree
+ 	
+	FOR [i 1 treeSize 1] [
+
+		MAKE "letter ITEM i tree
+
+		IFELSE :letter = "  [] [whichLetter: letter]
+	]
+
+	FOR [i tempCount treeSize 1] [SETITEM i tempTree " ]
+
+	MAKE "tempCount 1
+	MAKE "tree tempTree
+	MAKE "tempTree ARRAY treeSize
+
+END
+
+TO whichLetter: letter
+
+	IFELSE :letter = "X [] [SETITEM tempCount tempTree letter MAKE "tempCount :tempCount+1]
+
+
+	MAKE "rnd RANDOM 2
+
+	IFELSE :rnd = 0 [IFELSE :ruleExp > 0 [ifs] []] [IFELSE :letter = "X [letterX] [IF :letter = "F [letterF]]]
+END
+
+TO ifs
+	MAKE "ruleExp :ruleExp-1
+	IFELSE :letter = "X [letterX] [IF :letter = "F [letterF]]
+END
+
+TO letterX
+	SETITEM tempCount tempTree "F
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "-
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "B
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "B
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "X
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "C
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "+
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "X
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "C
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "+
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "F
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "B
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "+
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "F
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "X
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "C
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "-
+	MAKE "tempCount :tempCount+1
+	SETITEM tempCount tempTree "X
+	MAKE "tempCount :tempCount+1
+END
+
+TO letterF
+	SETITEM tempCount tempTree "F
+	MAKE "tempCount :tempCount+1
+END
+
+TO drawTree
+
+	FOR [i 1 treeSize 1] [
+	
+		MAKE "currentChar ITEM i tree
+
+		IF [EQUALP currentChar "F] [
+			FD 8
+		]
+		IF [EQUALP currentChar "+] [
+			RT 25
+		]
+		IF [EQUALP currentChar "-] [
+			LT 25
+		]
+		IF [EQUALP currentChar "B] [
+			MAKE "level :level+1
+			SETITEM level prevPos XCOR
+			MAKE "level :level+1
+			SETITEM level prevPos YCOR
+			MAKE "level :level+1
+			SETITEM level prevPos HEADING
+		]
+		IF [EQUALP currentChar "C] [
+			PU
+			SETHEADING ITEM level prevPos
+			MAKE "level :level-1
+			SETY ITEM level prevPos
+			MAKE "level :level-1
+			SETX ITEM level prevPos
+			MAKE "level :level-1
+			PD
+		]
+	]
+
+	MAKE "prevPos ARRAY 50
+	MAKE "level 0
+	MAKE "maxSize COUNT treeSize
+	MAKE "currentChar "X
+END
+
+TO output: num
+	PRINT num
+	makeTree
+	CS
+	PENUP
+	SETY -355
+	PENDOWN
+	drawTree
+END
+
+TO start
+	FOR [i 1 treeSize 1] [SETITEM i tree " ]
+	SETITEM 1 tree "X
+	MAKE "ruleExp 5
+	output: 1
+	output: 2
+	output: 3
+	output: 4
+	output: 5
+	output: 6
+	output: 7
+END
+
+TO runDemo
+	FOR [i 1 100 1] [start]
+END
+
+runDemo
